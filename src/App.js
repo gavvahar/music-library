@@ -6,31 +6,43 @@ import AlbumView from "./components/AlbumView";
 import ArtistView from "./components/ArtistView";
 
 function App() {
-  let [search, setSearch] = useState("");
+  function toTitleCase(str) {
+    return str
+      .toLowerCase()
+      .split(" ")
+      .map(function (word) {
+        return word.charAt(0).toUpperCase() + word.slice(1);
+      })
+      .join(" ");
+  }
+
+  let [searchTerm, setSearchTerm] = useState("");
   let [message, setMessage] = useState("Search for Music!");
   let [data, setData] = useState([]);
 
   const API_URL = "https://itunes.apple.com/search?term=";
 
   useEffect(() => {
-    if (search) {
+    if (searchTerm) {
+      document.title = `${searchTerm} Music`;
       const fetchData = async () => {
-        document.title = `${search} Music`;
-        const response = await fetch(API_URL + search);
+        const response = await fetch(API_URL + searchTerm);
         const resData = await response.json();
         if (resData.results.length > 0) {
-          return setData(resData.results);
+          setData(resData.results);
         } else {
-          return setMessage("Not Found");
+          setMessage("Not Found");
         }
       };
       fetchData();
     }
-  }, [search]);
+  }, [searchTerm, API_URL]);
 
   const handleSearch = (e, term) => {
     e.preventDefault();
-    setSearch(term);
+    term = toTitleCase(term);
+    setSearchTerm(term);
+    // return <Redirect to="/" />;
   };
 
   return (
@@ -39,6 +51,7 @@ function App() {
       <Router>
         <Routes>
           <Route
+            exact
             path="/"
             element={
               <React.Fragment>
@@ -47,8 +60,11 @@ function App() {
               </React.Fragment>
             }
           />
-          <Route path="/album/:id" element={<AlbumView />} />
-          <Route path="/artist/:id" element={<ArtistView />} />
+          <Route path="/album/:id" element={<AlbumView term={searchTerm} />} />
+          <Route
+            path="/artist/:id"
+            element={<ArtistView term={searchTerm} />}
+          />
         </Routes>
       </Router>
     </div>

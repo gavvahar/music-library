@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-function GalleryItem(props) {
+const GalleryItem = (props) => {
   let [view, setView] = useState(false);
 
   const simpleStyle = {
@@ -40,11 +40,11 @@ function GalleryItem(props) {
             {props.item.artistName}
           </Link>
         </h3>
-        <h3>
+        <p>
           <Link to={`/album/${props.item.collectionId}`}>
             {props.item.collectionName}
           </Link>
-        </h3>
+        </p>
         <h4>{props.item.primaryGenreName}</h4>
         <h4>{props.item.releaseDate}</h4>
       </div>
@@ -57,5 +57,5 @@ function GalleryItem(props) {
       {view ? detailView() : simpleView()}
     </div>
   );
-}
+};
 export default GalleryItem;
